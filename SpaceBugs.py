@@ -3,22 +3,10 @@
 # Importing packages
 import pygame
 import sys
-import time
 
 # Initializing Pygame
 pygame.init()
 
-# Setting a display caption and icon
-logo = pygame.image.load("IMGS/rocket.png")
-pygame.display.set_caption("Space Bugs")
-pygame.display.set_icon(logo)
-
-# Setting a display width and height and then creating it
-display_width = 700
-display_height = 500
-display_size = [display_width, display_height]
-game_display = pygame.display.set_mode(display_size)
-intro_display = pygame.display.set_mode(display_size)
 
 # Importing images
 healthBar = pygame.image.load("IMGS/HealthBar/15HP.png")
@@ -28,8 +16,16 @@ bullet = pygame.image.load("IMGS/bullet.png")
 enemyBullet = pygame.image.load("IMGS/smallBullet.png")
 enemy = pygame.image.load("IMGS/Enemy.png")
 BG = pygame.image.load("IMGS/BG.png")
+logo = pygame.image.load("IMGS/rocket.png")
 
-# ...
+# Setting a display caption and icon
+pygame.display.set_caption("Space Bugs")
+pygame.display.set_icon(logo)
+
+# Setting a display width and height and then creating it
+display_width, display_height = 700, 500
+game_display = pygame.display.set_mode((display_width, display_height))
+intro_display = pygame.display.set_mode((display_width, display_height))
 
 # Bullet
 bulletX = 0
@@ -43,15 +39,18 @@ enemyBulletXChange = 0
 enemyBulletYChange = 15
 enemyBulletState = "ready"
 
-# Creating fonts
+# Create fonts and a way to add text to screen
 pygame.font.init()
 font = pygame.font.SysFont("consolas", 30)
 large_font = pygame.font.SysFont("consolas", 60)
 small_font = pygame.font.SysFont("consolas", 20)
 impact = pygame.font.SysFont("impact", 30, True)
+def message(sentence, color, x, y, font_type, display):
+    sentence = font_type.render(str.encode(sentence), True, color)
+    display.blit(sentence, [x, y])
 
 
-#create Explosion class
+# Create Explosion class
 class Explosion(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
@@ -68,7 +67,7 @@ class Explosion(pygame.sprite.Sprite):
 
 	def update(self):
 		explosion_speed = 4
-		#update explosion animation
+		# Update explosion animation
 		self.counter += 1
 
 		if self.counter >= explosion_speed and self.index < len(self.images) - 1:
@@ -76,15 +75,9 @@ class Explosion(pygame.sprite.Sprite):
 			self.index += 1
 			self.image = self.images[self.index]
 
-		#if the animation is complete, reset animation index
+		# If the animation is complete, reset animation index
 		if self.index >= len(self.images) - 1 and self.counter >= explosion_speed:
 			self.kill()
-
-
-# Creating a way to add text to the screen
-def message(sentence, color, x, y, font_type, display):
-    sentence = font_type.render(str.encode(sentence), True, color)
-    display.blit(sentence, [x, y])
 
 
 # Firing bullet
@@ -104,7 +97,6 @@ def enemyShoot(x, y):
 def main():
     global white
     global black
-    global clock
     global bulletY
     global bullet_state
     global bulletX
@@ -115,27 +107,25 @@ def main():
     global enemyBulletState
     global healthBar
 
-    # Clock stuff
-    time_elapsed_since_last_action = 0
-    clock = pygame.time.Clock()
-
     # Spaceship coordinates
     spaceship_x = 260
     spaceship_y = 330
     spaceship_x_change = 0
+    spaceship_health = 15
+
 
     # Initializing pygame
     pygame.init()
 
     # Creating colors
     golden_yellow = (212, 175, 55)
-    # ...
+    black = (0, 0, 0)
+    white = (255, 255, 255)
 
     # Enemy variables
     enemy_x = 10
     enemy_y = 30
     enemyXChange = 7
-    enemyYChange = 7
     enemyHP = 5
     enemy_border = 53
     enemyXwidth = 61
@@ -149,17 +139,8 @@ def main():
     bulletWidth = 9
     bulletLength = 27
 
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    gray = (100, 100, 100)
-
-    spaceship_health = 15
-
     # Explosion animation
     explosion_group = pygame.sprite.Group()
-
-    # Creating a counter
-    clock = pygame.time.Clock()
 
     # Creating a loop to keep program running
     while True:
@@ -167,6 +148,7 @@ def main():
         # Setting Display color
         game_display.blit(BG, (0, 0))
 
+        # Add explosion to screen
         explosion_group.draw(game_display)
         explosion_group.update()
 
@@ -190,9 +172,7 @@ def main():
                 spaceship_x_change = 0
         
         bulletRect = pygame.Rect(bulletX + 52, bulletY - 70, 18, 55)
-        # pygame.draw.rect(game_display, white, bulletRect, 2)
         enemyBulletRect = pygame.Rect(enemyBulletX+13, enemyBulletY+20, bulletWidth, bulletLength)
-        # pygame.draw.rect(game_display, white, enemyBulletRect, 2)
 
         # Bullet movement
         if bulletY <= 0:
@@ -232,20 +212,19 @@ def main():
             game_display.blit(spaceship, (spaceship_x, spaceship_y))
             game_display.blit(healthBar, (5, 420))
             spaceshipRect = pygame.Rect(spaceship_x, spaceship_y+3, 120, 117)
-            # pygame.draw.rect(game_display, white, spaceshipRect, 2)
         else:
             sys.exit()
         # Enemy movement
         enemy_x += enemyXChange
         enemyRect = pygame.Rect(enemy_x-4, enemy_y+6, enemyXwidth, enemyYwidth)
-        # pygame.draw.rect(game_display, white, enemyRect, 2)
-
-        # Setting up new enemy
-        # Preventing the ship from going off the screen
+       
+        # Preventing the enemy from going off the screen
         if enemy_x > display_width-enemy_border:
             enemyXChange = -3
         if enemy_x < 1:
             enemyXChange = 3
+        
+        # How the enemy takes damage
         if bulletRect.colliderect(enemyRect):
             explosion = Explosion(enemy_x+EnemyMidPointX, enemy_y+EnemyMidPointY)
             explosion_group.add(explosion)
@@ -266,7 +245,6 @@ def main():
                 enemyHealthBar = pygame.image.load("IMGS/HealthBar/0HP.png")
         if enemyHP == 0:
             EnemyStageCounter -= 1
-            pass
             if EnemyStageCounter == 0:
                 enemy = pygame.image.load("IMGS//S2Enemy.png")
                 enemyBullet = pygame.image.load("IMGS/fatbullet.png")
@@ -343,7 +321,6 @@ while True:
     # Updating screen so changes take place
     pygame.display.update()
 
-    # Wrap-up
     # Limit to 60 frames per second
     clock = pygame.time.Clock()
     clock.tick(60)
