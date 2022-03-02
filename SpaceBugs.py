@@ -43,6 +43,7 @@ enemyBulletState = "ready"
 pygame.font.init()
 font = pygame.font.SysFont("consolas", 30)
 large_font = pygame.font.SysFont("consolas", 60)
+medium_font = pygame.font.SysFont("consolas", 40)
 small_font = pygame.font.SysFont("consolas", 20)
 impact = pygame.font.SysFont("impact", 30, True)
 def message(sentence, color, x, y, font_type, display):
@@ -95,8 +96,6 @@ def enemyShoot(x, y):
 
 # Main function
 def main():
-    global white
-    global black
     global bulletY
     global bullet_state
     global bulletX
@@ -107,7 +106,7 @@ def main():
     global enemyBulletState
     global healthBar
 
-    # Spaceship coordinates
+    # Spaceship variables
     spaceship_x = 260
     spaceship_y = 330
     spaceship_x_change = 0
@@ -119,7 +118,7 @@ def main():
 
     # Creating colors
     golden_yellow = (212, 175, 55)
-    black = (0, 0, 0)
+    grey = (175, 175, 175)
     white = (255, 255, 255)
 
     # Enemy variables
@@ -145,7 +144,7 @@ def main():
     # Creating a loop to keep program running
     while True:
 
-        # Setting Display color
+        # Setting a background
         game_display.blit(BG, (0, 0))
 
         # Add explosion to screen
@@ -171,6 +170,7 @@ def main():
             elif event.type == pygame.KEYUP:
                 spaceship_x_change = 0
         
+        # Bullet hitboxes
         bulletRect = pygame.Rect(bulletX + 52, bulletY - 70, 18, 55)
         enemyBulletRect = pygame.Rect(enemyBulletX+13, enemyBulletY+20, bulletWidth, bulletLength)
 
@@ -213,7 +213,9 @@ def main():
             game_display.blit(healthBar, (5, 420))
             spaceshipRect = pygame.Rect(spaceship_x, spaceship_y+3, 120, 117)
         else:
-            sys.exit()
+            message("Game over, press Q to quit", grey, 25, 250, medium_font, game_display)
+            enemyBulletState = "ready"
+        
         # Enemy movement
         enemy_x += enemyXChange
         enemyRect = pygame.Rect(enemy_x-4, enemy_y+6, enemyXwidth, enemyYwidth)
@@ -269,7 +271,6 @@ def main():
             spaceship_health -= 1
             enemyBulletY = enemy_y
             enemyBulletState = "ready"
-        healthBar = pygame.image.load("IMGS/HealthBar/{a}HP.png".format(a = spaceship_health*1))
         if enemyHP > 0:
             game_display.blit(enemy, (enemy_x, enemy_y))
             game_display.blit(enemyHealthBar, (5, -30))
@@ -279,6 +280,10 @@ def main():
                 message("PLAYER WINS!!!", golden_yellow, 150, 220, large_font, game_display)
                 message("Press Q to exit.", white, 200, 300, font, game_display)
                 enemyBulletState = "ready"
+
+        # Player health bar
+        healthBar = pygame.image.load("IMGS/HealthBar/{a}HP.png".format(a = spaceship_health*1))
+
 
         # Updating Screen so changes take places
         pygame.display.flip()
@@ -291,7 +296,7 @@ def main():
 # More colors
 black = (0, 0, 0)
 white = (255, 255, 255)
-gray = (100, 100, 100)
+grey = (100, 100, 100)
 
 # Creating Introduction screen
 while True:
@@ -301,14 +306,14 @@ while True:
     click = pygame.mouse.get_pressed()
     message("Space Bugs", white, 180, 150, large_font, intro_display)
     if 250 > mouse[0] > 150 and 400 > mouse[1] > 350:
-        pygame.draw.rect(game_display, gray, [150, 350, 100, 50])
+        pygame.draw.rect(game_display, grey, [150, 350, 100, 50])
         if click[0] == 1:
             break
     else:
         pygame.draw.rect(game_display, white, [150, 350, 100, 50])
 
     if 550 > mouse[0] > 450 and 400 > mouse[1] > 350:
-        pygame.draw.rect(game_display, gray, [450, 350, 100, 50])
+        pygame.draw.rect(game_display, grey, [450, 350, 100, 50])
         if click[0] == 1:
             pygame.quit()
             sys.exit()
