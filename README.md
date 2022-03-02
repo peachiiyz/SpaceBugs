@@ -8,4 +8,4 @@ Execute the PyInstaller file named SpaceBugs
 
 Press Start to play, Quit to exit
 
-Only works on Windows PCs.
+EXE(installation file) only works on Windows PCs.
