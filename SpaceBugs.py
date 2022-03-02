@@ -215,7 +215,8 @@ def main():
         else:
             message("Game over, press Q to quit", grey, 25, 250, medium_font, game_display)
             enemyBulletState = "ready"
-        
+            bullet_state = "ready"
+
         # Enemy movement
         enemy_x += enemyXChange
         enemyRect = pygame.Rect(enemy_x-4, enemy_y+6, enemyXwidth, enemyYwidth)
