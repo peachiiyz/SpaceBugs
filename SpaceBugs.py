@@ -137,6 +137,7 @@ def main():
     enemyBulletY = 30
     bulletWidth = 9
     bulletLength = 27
+    enemyDamage = 1
 
     # Explosion animation
     explosion_group = pygame.sprite.Group()
@@ -251,6 +252,7 @@ def main():
             if EnemyStageCounter == 0:
                 enemy = pygame.image.load("IMGS//S2Enemy.png")
                 enemyBullet = pygame.image.load("IMGS/fatbullet.png")
+                enemyDamage = 2
                 bulletWidth = 30
                 bulletLength = 60
                 enemyHP = 15
@@ -269,7 +271,7 @@ def main():
         if enemyBulletRect.colliderect(spaceshipRect):
             enemyExplosion = Explosion(spaceship_x+60, spaceship_y)
             explosion_group.add(enemyExplosion)
-            spaceship_health -= 1
+            spaceship_health -= enemyDamage
             enemyBulletY = enemy_y
             enemyBulletState = "ready"
         if enemyHP > 0:
@@ -307,19 +309,19 @@ while True:
     click = pygame.mouse.get_pressed()
     message("Space Bugs", white, 180, 150, large_font, intro_display)
     if 250 > mouse[0] > 150 and 400 > mouse[1] > 350:
-        pygame.draw.rect(game_display, grey, [150, 350, 100, 50])
+        pygame.draw.rect(intro_display, grey, [150, 350, 100, 50])
         if click[0] == 1:
-            break
+            main()
     else:
-        pygame.draw.rect(game_display, white, [150, 350, 100, 50])
+        pygame.draw.rect(intro_display, white, [150, 350, 100, 50])
 
     if 550 > mouse[0] > 450 and 400 > mouse[1] > 350:
-        pygame.draw.rect(game_display, grey, [450, 350, 100, 50])
+        pygame.draw.rect(intro_display, grey, [450, 350, 100, 50])
         if click[0] == 1:
             pygame.quit()
             sys.exit()
     else:
-        pygame.draw.rect(game_display, white, [450, 350, 100, 50])
+        pygame.draw.rect(intro_display, white, [450, 350, 100, 50])
 
     message("Start", black, 155, 360, font, intro_display)
     message("Quit", black, 465, 360, font, intro_display)
@@ -331,6 +333,4 @@ while True:
     clock = pygame.time.Clock()
     clock.tick(60)
 
-# Executing the function
-if __name__ == "__main__":
-    main()
+
