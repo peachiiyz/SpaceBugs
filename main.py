@@ -2,29 +2,37 @@
 
 # Imports and global variables -----------------------------------------------
 import pygame
-from images import *
-from explosion import *
-from message import *
+from modules.images import *
+from modules.explosion import *
+from modules.message import *
 
 # Display width and height.
 display_width, display_height = 800, 600
 # Bullet variables.
-bullet_x, bullet_y = 0, 375
-bullet_y_change = 12.5
+bullet_x, bullet_y = 0, 500
+bullet_y_change = 15
 bullet_state = False
 # Enemy Bullet variables.
 enemy_bullet_y_change = 17.5
 enemy_bullet_state = False
-# Colors
+# Colors.
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GOLDEN_YELLOW = (212, 175, 55)
 GREY = (175, 175, 175)
+# Fonts.
+pygame.font.init()
+small_font = pygame.font.SysFont("Comic Sans MS", 30)
+medium_font = pygame.font.SysFont("Comic Sans MS", 40)
+large_font = pygame.font.SysFont("Comic Sans MS", 60)
 
 
 # Functions ------------------------------------------------------------------
 # Firing bullet.
 def fire_bullet(x, y, canvas):
+    """
+    
+    """
     global bullet_state
     bullet_state = True
     canvas.blit(bullet, (x + 51, y - 77))
@@ -32,6 +40,9 @@ def fire_bullet(x, y, canvas):
 
 # Enemy firing bullet.
 def enemy_shoot(x, y, canvas):
+    """
+    
+    """
     global enemy_bullet_state
     enemy_bullet_state = True
     canvas.blit(enemy_bullet, (x+12, y+23))
@@ -80,14 +91,14 @@ def main():
                 elif event.key == pygame.K_a:
                     spaceship_x_change = -3
                 elif event.key == pygame.K_SPACE:
-                    if bullet_state is False:
+                    if not bullet_state:
                         bullet_x = spaceship_x
                         fire_bullet(bullet_x, bullet_y, game_display)
                 if event.key == pygame.K_q:
                     quit()
             elif event.type == pygame.KEYUP:
                 spaceship_x_change = 0
-
+        
         # Bullet hitboxes.
         bullet_rect = pygame.Rect(bullet_x + 52, bullet_y - 70, 18, 55)
         enemy_bullet_rect = pygame.Rect(enemy_bullet_x+13, enemy_bullet_y+20,
@@ -105,7 +116,7 @@ def main():
         # Enemy Bullet.
         for r in list(range(-1, 1)):
             if enemy_x+r == spaceship_x:
-                if enemy_bullet_state is False:
+                if not enemy_bullet_state:
                     enemy_bullet_x = enemy_x  # Fire when bullet in range.
                     enemy_shoot(enemy_x, enemy_y, game_display)
 
@@ -136,7 +147,7 @@ def main():
                     medium_font, game_display)
             enemy_bullet_state = False
             bullet_state = False
-
+        
         # Enemy moving left to right.
         enemy_x += enemy_x_change
         enemy_rect = pygame.Rect(enemy_x-4, enemy_y+6,
@@ -158,13 +169,13 @@ def main():
             bullet_y = 480
             bullet_state = False
         if enemy_stage_counter == 2:
-            enemy_health_bar = pygame.image.load("IMGS/HealthBar/" +
+            enemy_health_bar = pygame.image.load("assets/health_bar/" +
                                                  f"{enemy_hp_counter*3}HP.png")
         if enemy_hp == 0:
             enemy_stage_counter -= 1
             if enemy_stage_counter == 0:
-                enemy = pygame.image.load("IMGS//S2Enemy.png")
-                enemy_bullet = pygame.image.load("IMGS/fatbullet.png")
+                enemy = pygame.image.load("assets/enemies/S2Enemy.png")
+                enemy_bullet = pygame.image.load("assets/bullets/enemy_bullet2.png")
                 enemy_damage = 2
                 bullet_width, bullet_length = 30, 60
                 enemy_hp = 15
@@ -172,12 +183,12 @@ def main():
                 enemy_x_width, enemy_y_width = 119, 150
                 enemy_mid_point_x, enemy_mid_point_y = 60, 75
         if enemy_hp == 10:
-            enemy = pygame.image.load("IMGS/S2EnemyDamaged1.png")
+            enemy = pygame.image.load("assets/enemies/S2EnemyDamaged1.png")
         if enemy_hp == 5:
             if enemy_stage_counter == 0:
-                enemy = pygame.image.load("IMGS/S2EnemyDamaged2.png")
+                enemy = pygame.image.load("assets/enemies/S2EnemyDamaged2.png")
         if enemy_stage_counter == 0:
-            enemy_health_bar = pygame.image.load("IMGS/HealthBar/" +
+            enemy_health_bar = pygame.image.load("assets/health_bar/" +
                                                  f"{enemy_hp}HP.png")
         if enemy_bullet_rect.colliderect(spaceship_rect):
             enemy_explosion = Explosion(spaceship_x+60, spaceship_y)
@@ -189,23 +200,23 @@ def main():
             game_display.blit(enemy, (enemy_x, enemy_y))
             game_display.blit(enemy_health_bar, (5, -30))
         if enemy_hp <= 0:
-            if enemy_stage_counter < -20:
+           if enemy_stage_counter < 0:
                 spaceship_health = 15
                 message("PLAYER WINS!!!", GOLDEN_YELLOW, 150, 220,
                         large_font, game_display)
                 message("Press Q to exit.", WHITE, 200, 300,
-                        font, game_display)
+                        small_font, game_display)
                 enemy_bullet_state = False
 
         # Player health bar
         if spaceship_health >= 0:
-            health_bar = pygame.image.load("IMGS/HealthBar/" +
+            health_bar = pygame.image.load("assets/health_bar/" +
                                            f"{spaceship_health}HP.png")
         # Updating Screen so changes take places
         pygame.display.update()
         # Setting FPS
         FPS = pygame.time.Clock()
-        FPS.tick(180)
+        FPS.tick(120)
 
 
 # Main -----------------------------------------------------------------------
@@ -246,8 +257,8 @@ while True:
                          [display_width-250, display_height-150, 100, 50])
 
     # Writing Start and Quit on the buttons on screen.
-    message("Start", BLACK, 160, display_height-150, font, intro_display)
+    message("Start", BLACK, 160, display_height-150, small_font, intro_display)
     message("Quit", BLACK, display_width-235, display_height-150,
-            font, intro_display)
+            small_font, intro_display)
     # Updating screen so changes take place.
     pygame.display.update()
